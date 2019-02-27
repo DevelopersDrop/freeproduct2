@@ -9,6 +9,7 @@ use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Quote\Api\Data\ShippingAssignmentInterface;
 use Magento\Quote\Model\Quote;
+use \C4B\FreeProduct\Helper\Data as HelperData;
 
 /**
  * Observer for resetting gift cart items.
@@ -37,6 +38,20 @@ class ResetGiftItems implements ObserverInterface
     private $areGiftItemsReset = false;
 
     /**
+     * @var HelperData
+     */
+    protected $helperData;
+
+    /**
+     * @param HelperData $helperData
+     */
+    public function __construct(
+        HelperData $helperData
+    ) {
+        $this->helperData = $helperData;
+    }
+
+    /**
      * @event sales_quote_collect_totals_before
      * @event sales_quote_address_collect_totals_before
      * @param Observer $observer
@@ -45,6 +60,10 @@ class ResetGiftItems implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
+        if (!$this->helperData->getFreeProductEnabled()) {
+            return;
+        }
+
         /** @var Quote $quote */
         $quote = $observer->getEvent()->getData('quote');
         /** @var ShippingAssignmentInterface $shippingAssignment */

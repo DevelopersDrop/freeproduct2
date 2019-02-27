@@ -8,6 +8,7 @@ use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Quote\Model\Quote;
 use Magento\Checkout\Model\Session as CheckoutSession;
+use \C4B\FreeProduct\Helper\Data as HelperData;
 
 /**
  * Observer for resetting gift cart items
@@ -20,15 +21,26 @@ use Magento\Checkout\Model\Session as CheckoutSession;
  */
 class RemoveGiftItems implements ObserverInterface
 {
-    /** @var CheckoutSession */
+    /**
+     * @var CheckoutSession
+     */
     protected $checkoutSession;
 
     /**
-     * @param CheckoutSession $checkoutSession
+     * @var HelperData
      */
-    public function __construct(CheckoutSession $checkoutSession)
-    {
+    protected $helperData;
+
+    /**
+     * @param CheckoutSession $checkoutSession
+     * @param HelperData $helperData
+     */
+    public function __construct(
+        CheckoutSession $checkoutSession,
+        HelperData $helperData
+    ) {
         $this->checkoutSession = $checkoutSession;
+        $this->helperData = $helperData;
     }
 
     /**
@@ -40,6 +52,10 @@ class RemoveGiftItems implements ObserverInterface
      */
     public function execute(\Magento\Framework\Event\Observer $observer)
     {
+        if (!$this->helperData->getFreeProductEnabled()) {
+            return;
+        }
+
         /** @var \Magento\Quote\Model\Quote  */
         $quote = $this->checkoutSession->getQuote();
 

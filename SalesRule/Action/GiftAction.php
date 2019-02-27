@@ -11,6 +11,7 @@ use Magento\Quote\Api\Data\CartItemInterface;
 use Magento\Quote\Model\Quote\Address;
 use Magento\Quote\Model\Quote\Item\AbstractItem;
 use Magento\SalesRule\Model\Rule\Action\Discount;
+use \C4B\FreeProduct\Helper\Data as HelperData;
 
 use Psr\Log\LoggerInterface;
 
@@ -30,38 +31,50 @@ class GiftAction implements Discount\DiscountInterface
     const RULE_DATA_KEY_SKU = 'gift_sku';
     const PRODUCT_TYPE_FREEPRODUCT = 'freeproduct_gift';
     const APPLIED_FREEPRODUCT_RULE_IDS = '_freeproduct_applied_rules';
+
     /**
      * @var Discount\DataFactory
      */
     private $discountDataFactory;
+
     /**
      * @var ProductRepositoryInterface
      */
     private $productRepository;
+
     /**
      * @var ResetGiftItems
      */
     private $resetGiftItems;
+
+    /**
+     * @var HelperData
+     */
+    protected $helperData;
+
     /**
      * @var LoggerInterface
      */
     private $logger;
 
-
     /**
      * @param Discount\DataFactory $discountDataFactory
      * @param ProductRepositoryInterface $productRepository
      * @param ResetGiftItems $resetGiftItems
+     * @param HelperData $helperData
      * @param LoggerInterface $logger
      */
-    public function __construct(Discount\DataFactory $discountDataFactory,
-                                ProductRepositoryInterface $productRepository,
-                                ResetGiftItems $resetGiftItems,
-                                LoggerInterface $logger)
-    {
+    public function __construct(
+        Discount\DataFactory $discountDataFactory,
+        ProductRepositoryInterface $productRepository,
+        ResetGiftItems $resetGiftItems,
+        HelperData $helperData,
+        LoggerInterface $logger
+    ) {
         $this->discountDataFactory = $discountDataFactory;
         $this->productRepository = $productRepository;
         $this->resetGiftItems = $resetGiftItems;
+        $this->helperData = $helperData;
         $this->logger = $logger;
     }
 
@@ -77,7 +90,8 @@ class GiftAction implements Discount\DiscountInterface
     {
         $appliedRuleIds = $item->getAddress()->getData(static::APPLIED_FREEPRODUCT_RULE_IDS);
 
-        if ($item->getAddress()->getAddressType() != Address::TYPE_SHIPPING
+        if (!$this->helperData->getFreeProductEnabled()
+            || $item->getAddress()->getAddressType() != Address::TYPE_SHIPPING
             || ($appliedRuleIds != null && isset($appliedRuleIds[$rule->getId()])))
         {
             return $this->getDiscountData($item);

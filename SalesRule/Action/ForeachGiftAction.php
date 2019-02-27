@@ -8,6 +8,7 @@ use Magento\Customer\Model\Address;
 use Magento\Quote\Model\Quote\Item\AbstractItem;
 use Magento\SalesRule\Model\Rule\Action\Discount;
 use Psr\Log\LoggerInterface;
+use \C4B\FreeProduct\Helper\Data as HelperData;
 
 /**
  * Adds a gift for each cart item that meets criteria. It is also multiplied by the qty of said cart item.
@@ -21,10 +22,17 @@ use Psr\Log\LoggerInterface;
 class ForeachGiftAction extends GiftAction
 {
     const ACTION = 'add_gift_foreach';
+
     /**
      * @var ResetGiftItems
      */
     private $resetGiftItems;
+
+    /**
+     * @var HelperData
+     */
+    protected $helperData;
+
     /**
      * @var LoggerInterface
      */
@@ -35,15 +43,19 @@ class ForeachGiftAction extends GiftAction
      * @param Discount\DataFactory $discountDataFactory
      * @param ProductRepositoryInterface $productRepository
      * @param ResetGiftItems $resetGiftItems
+     * @param HelperData $helperData
      * @param LoggerInterface $logger
      */
-    public function __construct(Discount\DataFactory $discountDataFactory,
-                                ProductRepositoryInterface $productRepository,
-                                ResetGiftItems $resetGiftItems,
-                                LoggerInterface $logger)
-    {
+    public function __construct(
+        Discount\DataFactory $discountDataFactory,
+        ProductRepositoryInterface $productRepository,
+        ResetGiftItems $resetGiftItems,
+        HelperData $helperData,
+        LoggerInterface $logger
+    ) {
         parent::__construct($discountDataFactory, $productRepository, $resetGiftItems, $logger);
         $this->resetGiftItems = $resetGiftItems;
+        $this->helperData = $helperData;
         $this->logger = $logger;
     }
 
@@ -57,7 +69,8 @@ class ForeachGiftAction extends GiftAction
     {
         $appliedRuleIds = $item->getData(static::APPLIED_FREEPRODUCT_RULE_IDS);
 
-        if ($item->getAddress()->getAddressType() != Address::TYPE_SHIPPING
+        if (!$this->helperData->getFreeProductEnabled()
+            || $item->getAddress()->getAddressType() != Address::TYPE_SHIPPING
             || ($appliedRuleIds != null && isset($appliedRuleIds[$rule->getId()])))
         {
             return $this->getDiscountData($item);
