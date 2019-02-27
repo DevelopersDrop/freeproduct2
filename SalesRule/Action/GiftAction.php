@@ -144,7 +144,7 @@ class GiftAction implements Discount\DiscountInterface
      * @param int $ruleId
      * @param Address $address
      */
-    protected function addAppliedRuleId(int $ruleId, Address $address)
+    public function addAppliedRuleId(int $ruleId, Address $address)
     {
         $appliedRules = $address->getData(static::APPLIED_FREEPRODUCT_RULE_IDS);
 
@@ -165,7 +165,7 @@ class GiftAction implements Discount\DiscountInterface
      * @return ProductInterface|Product
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    protected function getGiftProduct(string $sku): ProductInterface
+    public function getGiftProduct(string $sku): ProductInterface
     {
         /** @var Product $product */
         $product = $this->productRepository->get($sku);

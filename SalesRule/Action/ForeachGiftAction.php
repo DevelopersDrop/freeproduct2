@@ -114,7 +114,7 @@ class ForeachGiftAction extends GiftAction
      * @param int $ruleId
      * @param AbstractItem $quoteItem
      */
-    protected function addAppliedRuleIdToItem(int $ruleId, AbstractItem $quoteItem)
+    public function addAppliedRuleIdToItem(int $ruleId, AbstractItem $quoteItem)
     {
         $appliedRules = $quoteItem->getData(static::APPLIED_FREEPRODUCT_RULE_IDS);
 
