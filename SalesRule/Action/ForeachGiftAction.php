@@ -53,7 +53,7 @@ class ForeachGiftAction extends GiftAction
         HelperData $helperData,
         LoggerInterface $logger
     ) {
-        parent::__construct($discountDataFactory, $productRepository, $resetGiftItems, $logger);
+        parent::__construct($discountDataFactory, $productRepository, $resetGiftItems, $helperData, $logger);
         $this->resetGiftItems = $resetGiftItems;
         $this->helperData = $helperData;
         $this->logger = $logger;
