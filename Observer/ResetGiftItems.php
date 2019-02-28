@@ -116,7 +116,7 @@ class ResetGiftItems implements ObserverInterface
      * @return Quote\Item[]
      * @throws \Exception
      */
-    protected function removeOldGiftQuoteItems($quoteItemsCollection)
+    public function removeOldGiftQuoteItems($quoteItemsCollection)
     {
         $realQuoteItems = [];
 
@@ -154,7 +154,7 @@ class ResetGiftItems implements ObserverInterface
      * @param Quote $quote
      * @param ShippingAssignmentInterface $shippingAssignment
      */
-    protected function updateExtensionAttributes(Quote $quote, $shippingAssignment)
+    public function updateExtensionAttributes(Quote $quote, $shippingAssignment)
     {
         if ($quote->getExtensionAttributes() != null)
         {

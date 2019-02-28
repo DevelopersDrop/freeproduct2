@@ -155,7 +155,7 @@ class GiftAction implements Discount\DiscountInterface
 
         $appliedRules[$ruleId] = $ruleId;
 
-        $address->setData(static::APPLIED_FREEPRODUCT_RULE_IDS, $appliedRules);
+        return $address->setData(static::APPLIED_FREEPRODUCT_RULE_IDS, $appliedRules);
     }
 
     /**
